@@ -1,0 +1,12 @@
+{application, kvmdb,
+ [{description, "Key Value in Memory DataBase"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {kvmdb_app, []}},
+  {applications,
+   [
+    kernel,
+    stdlib
+   ]}
+ ]
+}.
