@@ -1,0 +1,95 @@
+konstantin@IBM 17:33:38 ~$ curl -v -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --compressed http://localhost:8181/kvmdb_api/v1/keys/Key1 -d '{"value":"Value"}'
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> PUT /kvmdb_api/v1/keys/Key1 HTTP/1.1
+> Host: localhost:8181
+> User-Agent: curl/7.58.0
+> Accept-Encoding: deflate, gzip
+> Accept: application/json
+> Content-Type: application/json
+> Content-Length: 17
+>
+* upload completely sent off: 17 out of 17 bytes
+< HTTP/1.1 201 Created
+< content-length: 0
+< date: Tue, 16 Feb 2021 10:33:44 GMT
+< server: Cowboy
+<
+* Connection #0 to host localhost left intact
+konstantin@IBM 17:33:44 ~$ curl -v -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --compressed http://localhost:8181/kvmdb_api/v1/keys/Key2 -d '{"value":"Value"}'
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> PUT /kvmdb_api/v1/keys/Key2 HTTP/1.1
+> Host: localhost:8181
+> User-Agent: curl/7.58.0
+> Accept-Encoding: deflate, gzip
+> Accept: application/json
+> Content-Type: application/json
+> Content-Length: 17
+>
+* upload completely sent off: 17 out of 17 bytes
+< HTTP/1.1 201 Created
+< content-length: 0
+< date: Tue, 16 Feb 2021 10:33:47 GMT
+< server: Cowboy
+<
+* Connection #0 to host localhost left intact
+konstantin@IBM 17:33:48 ~$ curl -v -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --compressed http://localhost:8181/kvmdb_api/v1/keys/Key3 -d '{"value":"Value"}'
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> PUT /kvmdb_api/v1/keys/Key3 HTTP/1.1
+> Host: localhost:8181
+> User-Agent: curl/7.58.0
+> Accept-Encoding: deflate, gzip
+> Accept: application/json
+> Content-Type: application/json
+> Content-Length: 17
+>
+* upload completely sent off: 17 out of 17 bytes
+< HTTP/1.1 201 Created
+< content-length: 0
+< date: Tue, 16 Feb 2021 10:33:50 GMT
+< server: Cowboy
+<
+* Connection #0 to host localhost left intact
+konstantin@IBM 17:33:50 ~$ curl -v -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --compressed http://localhost:8181/kvmdb_api/v1/keys/Key4 -d '{"value":"Value"}'
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> PUT /kvmdb_api/v1/keys/Key4 HTTP/1.1
+> Host: localhost:8181
+> User-Agent: curl/7.58.0
+> Accept-Encoding: deflate, gzip
+> Accept: application/json
+> Content-Type: application/json
+> Content-Length: 17
+>
+* upload completely sent off: 17 out of 17 bytes
+< HTTP/1.1 201 Created
+< content-length: 0
+< date: Tue, 16 Feb 2021 10:33:53 GMT
+< server: Cowboy
+<
+* Connection #0 to host localhost left intact
+konstantin@IBM 17:33:53 ~$ curl -v -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --compressed http://localhost:8181/kvmdb_api/v1/keys/Key5 -d '{"value":"Value"}'
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> PUT /kvmdb_api/v1/keys/Key5 HTTP/1.1
+> Host: localhost:8181
+> User-Agent: curl/7.58.0
+> Accept-Encoding: deflate, gzip
+> Accept: application/json
+> Content-Type: application/json
+> Content-Length: 17
+>
+* upload completely sent off: 17 out of 17 bytes
+< HTTP/1.1 201 Created
+< content-length: 0
+< date: Tue, 16 Feb 2021 10:33:55 GMT
+< server: Cowboy
+<
+* Connection #0 to host localhost left intact

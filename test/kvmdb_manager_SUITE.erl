@@ -20,7 +20,7 @@
     insert_get_insert_get/1,
     insert_max_key_count_reached/1,
     insert_max_value_size_exceeded/1,
-    delete_not_found/1,
+    is_exists/1,
     insert_delete_get/1
 ]).
 
@@ -35,7 +35,7 @@ all() -> [
     insert_get_insert_get,
     insert_max_key_count_reached,
     insert_max_value_size_exceeded,
-    delete_not_found,
+    is_exists,
     insert_delete_get
 ].
 
@@ -69,7 +69,7 @@ start_get(_Config) ->
 
 insert_get(_Config) ->
     ?assertEqual(
-        ok,
+        {ok, inserted},
         kvmdb_manager:insert({<<"key">>, <<"value">>})
     ),
     {KV2, Continuation, _} = kvmdb_manager:start_get(),
@@ -84,7 +84,7 @@ insert_get(_Config) ->
 
 insert_get_update_get(_Config) ->
     ?assertEqual(
-        ok,
+        {ok, inserted},
         kvmdb_manager:insert({<<"key">>, <<"value">>})
     ),
     {KV2, Continuation, To} = kvmdb_manager:start_get(),
@@ -97,7 +97,7 @@ insert_get_update_get(_Config) ->
         kvmdb_manager:continue_get(Continuation)
     ),
     ?assertEqual(
-        ok,
+        {ok, updated},
         kvmdb_manager:insert({<<"key">>, <<"value2">>})
     ),
     {KV3, Continuation2, _} = kvmdb_manager:start_get(To),
@@ -112,7 +112,7 @@ insert_get_update_get(_Config) ->
 
 insert_get_insert_get(_Config) ->
     ?assertEqual(
-        ok,
+        {ok, inserted},
         kvmdb_manager:insert({<<"key">>, <<"value">>})
     ),
     {KV2, Continuation, To} = kvmdb_manager:start_get(),
@@ -125,7 +125,7 @@ insert_get_insert_get(_Config) ->
         kvmdb_manager:continue_get(Continuation)
     ),
     ?assertEqual(
-        ok,
+        {ok, inserted},
         kvmdb_manager:insert({<<"key2">>, <<"value2">>})
     ),
     {KV3, Continuation2, _} = kvmdb_manager:start_get(To),
@@ -139,10 +139,10 @@ insert_get_insert_get(_Config) ->
     ).
 
 insert_max_key_count_reached(_Config) ->
-    ok = kvmdb_manager:insert({<<"key">>, <<"value">>}),
-    ok = kvmdb_manager:insert({<<"key2">>, <<"value2">>}),
-    ok = kvmdb_manager:insert({<<"key3">>, <<"value3">>}),
-    ok = kvmdb_manager:insert({<<"key4">>, <<"value4">>}),
+    ?assertEqual({ok, inserted}, kvmdb_manager:insert({<<"key">>, <<"value">>})),
+    ?assertEqual({ok, inserted}, kvmdb_manager:insert({<<"key2">>, <<"value2">>})),
+    ?assertEqual({ok, inserted}, kvmdb_manager:insert({<<"key3">>, <<"value3">>})),
+    ?assertEqual({ok, inserted}, kvmdb_manager:insert({<<"key4">>, <<"value4">>})),
     ?assertEqual(
         {error, max_key_count_reached},
         kvmdb_manager:insert({<<"key5">>, <<"value5">>})
@@ -154,15 +154,15 @@ insert_max_value_size_exceeded(_Config) ->
         kvmdb_manager:insert({<<"key5">>, <<"value101">>})
     ).
 
-delete_not_found(_Config) ->
+is_exists(_Config) ->
     ?assertEqual(
-        {error, not_found},
-        kvmdb_manager:delete(<<"key">>)
+        false,
+        kvmdb_manager:is_exists(<<"key">>)
     ).
 
 insert_delete_get(_Config) ->
     ?assertEqual(
-        ok,
+        {ok, inserted},
         kvmdb_manager:insert({<<"key">>, <<"value">>})
     ),
     ?assertEqual(

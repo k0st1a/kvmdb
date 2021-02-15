@@ -7,6 +7,8 @@
 -export([
     %% API
     start_link/1,
+    is_started/0,
+    is_exists/1,
     insert/1,
     delete/1,
     start_get/0,
@@ -45,7 +47,6 @@
 -record(delete, {
     key :: binary()
 }).
--type delete() :: #delete{}.
 
 %%%===================================================================
 %%% API
@@ -62,19 +63,30 @@ start_link(Args) ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, Args, []).
 
 %%--------------------------------------------------------------------
+-spec is_started() -> boolean().
+is_started() ->
+    erlang:is_pid(
+        erlang:whereis(?MODULE)
+    ).
+
+%%--------------------------------------------------------------------
 -spec insert({Key :: binary(), Value :: binary()}) ->
-    ok
-    | {error, max_key_count_reached}
-    | {error, max_value_size_exceeded}.
+    {ok, inserted}
+    | {ok, updated}
+    | {error, max_key_count_reached}.
 insert({Key, Value}) ->
     gen_server:call(?MODULE, #insert{key = Key, value = Value}).
 
 %%--------------------------------------------------------------------
--spec delete(Key :: binary()) ->
-    ok
-    | {error, not_found}.
+-spec is_exists(Key :: binary()) -> boolean().
+is_exists(Key) ->
+    ets:member(?TABLE_NAME, Key).
+
+%%--------------------------------------------------------------------
+-spec delete(Key :: binary()) -> ok.
 delete(Key) ->
-    gen_server:call(?MODULE, #delete{key = Key}).
+    gen_server:call(?MODULE, #delete{key = Key}),
+    ok.
 
 %%--------------------------------------------------------------------
 -type kv() :: {Key :: binary(), Value :: binary()}.
@@ -183,23 +195,17 @@ init(Args) ->
 handle_call(#insert{} = Req, _From, #state{} = State) ->
     lager:debug("insert, From: ~100p, Req:~p", [_From, Req]),
     case handle_insert(Req, State) of
-        ok ->
-            lager:debug("Ok", []),
-            {reply, ok, State};
+        {ok, Action} ->
+            lager:debug("Ok, Action:~1000p", [Action]),
+            {reply, {ok, Action}, State};
         {error, Cause} ->
             lager:debug("Error of insert, Cause:~1000p", [Cause]),
             {reply, {error, Cause}, State}
     end;
-handle_call(#delete{} = Req, _From, #state{} = State) ->
-    lager:debug("delete, From: ~100p, Req:~p", [_From, Req]),
-    case handle_delete(Req) of
-        ok ->
-            lager:debug("Deleted", []),
-            {reply, ok, State};
-        {error, Cause} ->
-            lager:debug("Error of delete, Cause:~1000p", [Cause]),
-            {reply, {error, Cause}, State}
-    end;
+handle_call(#delete{key = Key}, _From, #state{} = State) ->
+    lager:debug("delete, From:~100p, Key:~1000p", [_From, Key]),
+    ets:delete(?TABLE_NAME, Key),
+    {reply, true, State};
 handle_call(_Msg, _From, State) ->
     lager:debug("Unknown handle_call, From: ~100p, Msg:~p", [_From, _Msg]),
     {reply, {error, unknown_msg}, State}.
@@ -262,7 +268,8 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
--spec handle_insert(Req :: insert(), State :: state()) -> ok
+-spec handle_insert(Req :: insert(), State :: state()) -> {ok, inserted}
+                                                        | {ok, updated}
                                                         | {error, max_key_count_reached}
                                                         | {error, max_value_size_exceeded}.
 handle_insert(#insert{value = Value}, #state{max_value_size = MaxValueSize}) when bit_size(Value) > MaxValueSize ->
@@ -281,13 +288,13 @@ handle_insert(#insert{key = Key, value = Value} = Req, State) ->
                     {#kvr.timestamp, erlang:timestamp()}
                 ]
             ),
-            ok;
+            {ok, updated};
         _ ->
             lager:debug("key(~1000p) not exists => insert", [Key]),
             try_insert(Req, State)
     end.
 
--spec try_insert(Req :: insert(), State :: state()) -> ok
+-spec try_insert(Req :: insert(), State :: state()) -> {ok, inserted}
                                                      | {error, max_key_count_reached}.
 try_insert(#insert{key = Key, value = Value} = Req, #state{max_key_count = MaxKeyCount}) ->
     KeyCount = ets:info(?TABLE_NAME, size),
@@ -306,19 +313,5 @@ try_insert(#insert{key = Key, value = Value} = Req, #state{max_key_count = MaxKe
                     timestamp = erlang:timestamp()
                 }
             ),
-            ok
-    end.
-
--spec handle_delete(Req :: delete()) -> ok
-                                      | {error, not_found}.
-handle_delete(#delete{key = Key}) ->
-    lager:debug("Handle delete, Key:~1000p", [Key]),
-    case ets:member(?TABLE_NAME, Key) of
-        true ->
-            lager:debug("key(~1000p) exists => delete", [Key]),
-            ets:delete(?TABLE_NAME, Key),
-            ok;
-        _ ->
-            lager:debug("key(~1000p) not exists => error", [Key]),
-            {error, not_found}
+            {ok, inserted}
     end.

@@ -6,7 +6,9 @@
   {applications,
    [
     kernel,
-    stdlib
+    stdlib,
+    cowboy,
+    jsx
    ]}
  ]
 }.

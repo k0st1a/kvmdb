@@ -1,0 +1,24 @@
+konstantin@IBM 17:33:34 ~/git/kvmdb$ curl -v -N -X GET -H "Accept: application/json" -H 'Connection: keep-alive' --compressed http://localhost:8181/kvmdb_api/v1/streams
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> GET /kvmdb_api/v1/streams HTTP/1.1
+> Host: localhost:8181
+> User-Agent: curl/7.58.0
+> Accept-Encoding: deflate, gzip
+> Accept: application/json
+> Connection: keep-alive
+>
+< HTTP/1.1 200 OK
+< content-encoding: gzip
+< content-type: application/json
+< date: Tue, 16 Feb 2021 10:33:35 GMT
+< server: Cowboy
+< transfer-encoding: chunked
+< vary: accept-encoding
+<
+[{"Key1":"Value"}][{"Key2":"Value"},{"Key3":"Value"}][{"Key4":"Value"},{"Key5":"Value"}]* transfer closed with outstanding read data remaining
+* stopped the pause stream!
+* Closing connection 0
+curl: (18) transfer closed with outstanding read data remaining
